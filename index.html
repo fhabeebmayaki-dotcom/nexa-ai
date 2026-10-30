@@ -1,474 +1,536 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXA — AI Audience Intelligence</title>
-<meta name="description" content="NEXA — AI analyzes real-time conversations to uncover what matters most to your audience.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEXA — AI Audience Intelligence (Prototype)</title>
+<meta name="description" content="Prototype of NEXA, an AI audience-intelligence platform. Demo data only — no live data, no real authentication, no backend.">
 <style>
-  :root{
-    --black:#000000;
-    --white:#ffffff;
-    --grey:#9a9a9a;
-    --grey-dim:#6b6b6b;
-    --blue:#a8c8ff;
-    --blue-2:#7fb0ff;
-    --serif:"Playfair Display", Georgia, "Times New Roman", serif;
-    --sans:"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{
-    background:var(--black);
-    color:var(--white);
-    font-family:var(--sans);
-    overflow-x:hidden;
-    -webkit-font-smoothing:antialiased;
-  }
-  a{color:inherit;text-decoration:none}
-  /* ---------- Nav ---------- */
-  header{
-    position:fixed;top:0;left:0;right:0;z-index:50;
-    display:flex;align-items:center;justify-content:space-between;
-    padding:22px clamp(20px,4vw,56px);
-    background:linear-gradient(to bottom, rgba(0,0,0,.85), rgba(0,0,0,0));
-  }
-  .logo{
-    font-family:var(--serif);font-weight:500;
-    font-size:20px;letter-spacing:.42em;text-transform:uppercase;
-  }
-  nav{display:flex;gap:38px}
-  nav a{
-    font-size:13px;letter-spacing:.06em;color:#d8d8d8;
-    transition:color .25s ease;
-  }
-  nav a:hover{color:#fff}
-  .nav-cta{
-    display:inline-flex;align-items:center;gap:8px;
-    background:#fff;color:#000;
-    padding:10px 20px;border-radius:999px;
-    font-size:13px;font-weight:600;letter-spacing:.02em;
-    transition:transform .25s ease, background .25s ease;
-  }
-  .nav-cta:hover{transform:translateY(-1px);background:#e8e8e8}
-  /* ---------- Sections ---------- */
-  section{position:relative;min-height:100vh;overflow:hidden}
-  canvas.field{position:absolute;inset:0;width:100%;height:100%;display:block}
-  .content{
-    position:relative;z-index:2;
-    padding:clamp(20px,4vw,56px);
-  }
-  .label{
-    font-size:11px;letter-spacing:.28em;text-transform:uppercase;
-    color:var(--grey);font-weight:500;
-  }
-  /* ---------- Hero ---------- */
-  .hero-content{
-    min-height:100vh;display:flex;flex-direction:column;justify-content:center;
-    max-width:1200px;margin:0 auto;width:100%;
-    padding-top:90px;padding-bottom:110px;
-  }
-  .hero-content .label{margin-bottom:28px}
-  h1{
-    font-family:var(--serif);font-weight:500;
-    font-size:clamp(52px, 8.5vw, 118px);
-    line-height:.98;letter-spacing:-.01em;
-  }
-  h1 em{font-style:italic;font-weight:400}
-  .subhead{
-    margin-top:30px;max-width:520px;
-    font-size:clamp(15px,1.4vw,18px);line-height:1.65;color:var(--grey);
-  }
-  .pill{
-    display:inline-flex;align-items:center;gap:10px;
-    margin-top:36px;align-self:flex-start;
-    background:#fff;color:#000;
-    padding:14px 28px;border-radius:999px;
-    font-size:14px;font-weight:600;
-    transition:transform .25s ease, background .25s ease;
-  }
-  .pill:hover{transform:translateY(-1px);background:#e8e8e8}
-  .scroll-hint{
-    position:absolute;left:50%;bottom:28px;transform:translateX(-50%);
-    z-index:3;text-align:center;
-  }
-  .scroll-hint span{
-    display:block;font-size:10px;letter-spacing:.34em;color:var(--grey);
-    margin-bottom:10px;
-  }
-  .scroll-hint i{
-    display:block;width:1px;height:44px;margin:0 auto;
-    background:linear-gradient(to bottom,#fff,transparent);
-    animation:scrollPulse 2.2s ease-in-out infinite;
-  }
-  @keyframes scrollPulse{0%,100%{opacity:.35}50%{opacity:1}}
-  .signal{
-    position:absolute;right:clamp(20px,4vw,56px);bottom:32px;z-index:3;
-    text-align:right;
-  }
-  .signal .signal-label{
-    font-size:10px;letter-spacing:.28em;color:var(--grey);
-  }
-  .signal .signal-value{
-    font-family:var(--serif);font-size:clamp(28px,3vw,40px);
-    line-height:1.1;margin-top:4px;font-variant-numeric:tabular-nums;
-  }
-  .signal .signal-note{font-size:11px;color:var(--grey-dim);margin-top:2px}
-  /* ---------- Motion section ---------- */
-  .motion-content{
-    min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;
-    max-width:1200px;margin:0 auto;width:100%;
-    padding-top:110px;padding-bottom:90px;
-  }
-  .motion-content .label{margin-bottom:24px}
-  h2{
-    font-family:var(--serif);font-weight:500;
-    font-size:clamp(40px, 6vw, 84px);
-    line-height:1.02;letter-spacing:-.01em;max-width:820px;
-  }
-  h2 em{font-style:italic;font-weight:400}
-  .motion-note{
-    margin-top:24px;max-width:480px;
-    font-size:15px;line-height:1.65;color:var(--grey);
-  }
-  /* ---------- Reveal ---------- */
-  .reveal{opacity:0;transform:translateY(28px);transition:opacity .9s ease, transform .9s ease}
-  .reveal.visible{opacity:1;transform:translateY(0)}
-  .reveal-d1{transition-delay:.12s}
-  .reveal-d2{transition-delay:.24s}
-  .reveal-d3{transition-delay:.36s}
-  /* ---------- Footer ---------- */
-  footer{
-    border-top:1px solid rgba(255,255,255,.12);
-    padding:26px clamp(20px,4vw,56px);
-    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
-    font-size:12px;letter-spacing:.08em;color:var(--grey-dim);
-  }
-  /* ---------- Responsive ---------- */
-  @media (max-width: 820px){
-    nav{display:none}
-    header{padding:18px 20px}
-    .hero-content{padding-top:80px;padding-bottom:130px}
-    h1{font-size:clamp(46px, 13vw, 72px)}
-    .signal{bottom:86px}
-    .scroll-hint{bottom:20px}
-    .motion-content{padding-bottom:70px}
-  }
-  @media (prefers-reduced-motion: reduce){
-    html{scroll-behavior:auto}
-    .reveal{opacity:1;transform:none;transition:none}
-    .scroll-hint i{animation:none}
-  }
+:root{--forest:#1d3a2a;--evergreen:#2e5a3f;--moss:#6a9a72;--moss-lt:#e6efe6;--cream:#faf8f3;--paper:#ffffff;--ink:#1c241e;--muted:#5a6a5e;--line:#dfe7df;--gold:#b9975b;--red:#a34a3a;--amber:#b07d2b}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--cream);color:var(--ink);line-height:1.55}
+a{color:var(--evergreen)}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+header.site{position:sticky;top:0;z-index:20;background:var(--forest);color:#fff}
+.nav{max-width:1200px;margin:0 auto;padding:.8rem 1rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.logo{font-weight:800;letter-spacing:.12em;font-size:1.15rem;color:#fff;text-decoration:none}
+.logo span{color:#a8c9a5}.nav a{color:#e8efe8;text-decoration:none}
+.nav-links{display:flex;gap:1rem;flex-wrap:wrap;margin-left:auto}
+.btn{display:inline-block;border:0;border-radius:8px;padding:.65rem 1.1rem;font-weight:700;cursor:pointer;text-decoration:none;background:var(--evergreen);color:#fff}
+.btn.secondary{background:transparent;border:2px solid var(--evergreen);color:var(--evergreen)}
+.btn.light{background:#fff;color:var(--forest)} .btn.small{padding:.4rem .8rem;font-size:.9rem}
+main{max-width:1200px;margin:0 auto;padding:0 1rem 3rem}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;padding:3rem 0 2rem;align-items:center}
+.hero h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.1;margin:.2rem 0}
+.hero h1 em{font-style:normal;color:var(--evergreen)}
+.kicker{letter-spacing:.14em;text-transform:uppercase;font-size:.8rem;color:var(--evergreen);font-weight:800}
+#heroCanvas{width:100%;height:280px;background:var(--forest);border-radius:16px;display:block}
+.readout{background:var(--forest);color:#d7e5d3;border-radius:0 0 16px 16px;margin-top:-16px;padding:.6rem 1rem;font-size:.9rem}
+section{padding:2rem 0}h2{font-size:1.8rem;margin:.2rem 0 .6rem}h3{margin:.4rem 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:1.1rem}
+.card p{color:var(--muted)} .tag{display:inline-block;background:var(--moss-lt);color:var(--evergreen);border-radius:99px;padding:.15rem .7rem;font-size:.8rem;font-weight:700}
+.steps{counter-reset:step}.steps .card{counter-increment:step}.steps .card h3::before{content:counter(step) ". ";color:var(--evergreen)}
+label{display:block;font-weight:600;margin:.7rem 0 .25rem}
+input,select,textarea{width:100%;padding:.6rem;border:1px solid #b9c6b9;border-radius:8px;font:inherit;background:#fff}
+input[type=checkbox]{width:auto}.err{color:var(--red);font-weight:700}.ok{color:var(--evergreen);font-weight:700}
+footer.site{background:var(--forest);color:#d7e5d3;padding:2rem 1rem}footer.site a{color:#fff}
+.small{font-size:.9rem;color:var(--muted)}.demo-banner{background:#fff3cd;border:2px solid var(--amber);border-radius:10px;padding:.7rem 1rem;font-weight:700;margin:1rem 0}
+.hidden{display:none!important}
+/* App shell */
+#app{border-top:4px solid var(--forest)}
+.app-layout{display:grid;grid-template-columns:220px 1fr;gap:1rem;align-items:start}
+.sidebar{background:var(--forest);color:#fff;border-radius:12px;padding:.8rem;position:sticky;top:70px}
+.sidebar button{display:block;width:100%;text-align:left;background:transparent;border:0;color:#e8efe8;padding:.6rem .7rem;border-radius:8px;cursor:pointer;font:inherit}
+.sidebar button.active,.sidebar button:hover{background:var(--evergreen);color:#fff}
+.drawer-btn{display:none}
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:.8rem}
+.metric{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:1rem}.metric b{font-size:1.6rem;display:block}
+.bar-row{display:grid;grid-template-columns:110px 1fr 60px;gap:.6rem;align-items:center;margin:.4rem 0}
+.bar{height:18px;background:var(--moss-lt);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--evergreen)}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:.5rem;border-bottom:1px solid var(--line);vertical-align:top}
+.filters{display:flex;gap:.7rem;flex-wrap:wrap;align-items:end}.filters>div{flex:1 1 140px}
+canvas.chart{width:100%;height:220px;background:#fff;border:1px solid var(--line);border-radius:12px}
+.topic-btn{width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:8px;padding:.6rem;cursor:pointer;font:inherit}
+.topic-btn:hover,.topic-btn.active{border-color:var(--evergreen);background:var(--moss-lt)}
+@media(max-width:1024px){.grid{grid-template-columns:1fr 1fr}.metrics{grid-template-columns:repeat(3,1fr)}.app-layout{grid-template-columns:180px 1fr}}
+@media(max-width:768px){.hero{grid-template-columns:1fr}.grid,.grid2{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}
+.app-layout{grid-template-columns:1fr}.sidebar{position:static}.sidebar nav{display:none}.sidebar.open nav{display:block}.drawer-btn{display:block;width:100%;background:var(--evergreen);color:#fff;border:0;border-radius:8px;padding:.6rem;cursor:pointer}
+.nav-links{display:none}.nav-links.open{display:flex;flex-basis:100%}.menu-btn{display:inline-block!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
+<header class="site"><nav class="nav" aria-label="Main">
+<a class="logo" href="#top">NEXA<span>.</span></a>
+<button class="btn light small menu-btn hidden" id="menuBtn" aria-expanded="false" aria-controls="navLinks">Menu</button>
+<div class="nav-links" id="navLinks">
+<a href="#product">Product</a><a href="#usecases">Use Cases</a><a href="#how">How It Works</a><a href="#security">Security &amp; Privacy</a>
+<a href="#privacy">Privacy</a><a href="#terms">Terms</a>
+<button class="btn light small" data-signin>Sign In</button><button class="btn small" style="background:var(--gold);color:#1d3a2a" data-signin>Get Started</button>
+</div></nav></header>
 
-<header>
-  <a class="logo" href="#top">NEXA</a>
-  <nav aria-label="Primary">
-    <a href="#top">Product</a>
-    <a href="#motion">Research</a>
-    <a href="#motion">Company</a>
-  </nav>
-  <a class="nav-cta" href="#top">Get started &rarr;</a>
-</header>
+<main id="top">
+<section class="hero" aria-label="Introduction">
+<div>
+<p class="kicker">AI audience intelligence · Prototype</p>
+<h1>Nature never guesses.<br><em>Neither does NEXA.</em></h1>
+<p>Understand the conversations shaping your audience. Discover emerging trends, uncover customer sentiment, and turn signals into evidence-backed business decisions.</p>
+<p><a class="btn" href="#app" id="exploreBtn">Explore the platform</a> <a class="btn secondary" href="#demo">Request a demo</a></p>
+<p class="small">This page is a local prototype. The dashboard below runs on clearly labelled fictional demo data in your browser only. There is no live data pipeline, no real sign-in, and no backend.</p>
+</div>
+<div><canvas id="heroCanvas" width="520" height="280" aria-label="Decorative particle field inspired by leaves and light through a canopy"></canvas>
+<p class="readout" role="status">SIGNAL DISTANCE: <span id="signalDist">—</span> · Move your pointer over the field. With reduced motion, the field is static.</p></div>
+</section>
 
-<main>
-  <!-- ============ HERO ============ -->
-  <section id="top" aria-label="NEXA hero">
-    <canvas id="hands" class="field" aria-hidden="true"></canvas>
+<section id="product"><h2>Product</h2>
+<p>NEXA turns conversations into useful business intelligence: what people are saying, which topics are gaining or losing attention, how sentiment is shifting, and what evidence supports each finding.</p>
+<div class="grid">
+<div class="card"><h3>Audience activity</h3><p>Conversation volume over time, with date-range filters that change the numbers shown.</p></div>
+<div class="card"><h3>Sentiment, honestly labelled</h3><p>Positive, neutral, negative and unclassified shares — with the caveat that automated sentiment is uncertain and context-dependent.</p></div>
+<div class="card"><h3>Topics with evidence</h3><p>Click a topic to see the actual records behind it, not just a score.</p></div>
+<div class="card"><h3>Emerging signals</h3><p>Only flagged when a stated baseline comparison supports it, with first/last observed dates and supporting record counts.</p></div>
+<div class="card"><h3>Reports you can check</h3><p>Generate a report from the selected project and date range and export the underlying filtered records as CSV.</p></div>
+<div class="card"><h3>Your data, your call</h3><p>Upload a CSV in the prototype and it stays in your browser, separate from demo data. Nothing is sent to a server by this prototype.</p></div>
+</div></section>
 
-    <div class="content hero-content">
-      <p class="label reveal">AI Audience Intelligence</p>
-      <h1 class="reveal reveal-d1">Nature never<br>guesses.<br><em>Neither does</em><br>NEXA.</h1>
-      <p class="subhead reveal reveal-d2">AI analyzes real-time conversations to uncover what matters most to your audience.</p>
-      <a class="pill reveal reveal-d3" href="#motion">Get started &rarr;</a>
-    </div>
+<section id="how"><h2>How It Works</h2><div class="grid steps">
+<div class="card"><h3>Collect authorized audience data</h3><p>In this prototype: explore demo data, or upload your own CSV. No social platform is connected.</p></div>
+<div class="card"><h3>Organize conversations and detect patterns</h3><p>Records are grouped by topic, source, sentiment and time so patterns can be inspected.</p></div>
+<div class="card"><h3>Analyze sentiment, topics, and recurring needs</h3><p>Counts and shares are computed from the records in view. Prototype analysis is rule-based on labelled demo data, not a live AI model.</p></div>
+<div class="card"><h3>Review evidence-backed findings and take action</h3><p>Each insight links to supporting records, states its limitations, and suggests a next step.</p></div>
+</div></section>
 
-    <div class="scroll-hint" aria-hidden="true">
-      <span>SCROLL</span><i></i>
-    </div>
+<section id="usecases"><h2>Use Cases</h2><div class="grid">
+<div class="card"><h3>Brand monitoring</h3><p>Requires: brand/product keywords and a date range. Watch volume and sentiment for your brand terms.</p></div>
+<div class="card"><h3>Customer feedback analysis</h3><p>Requires: feedback text with timestamps (CSV upload in the prototype). Group recurring praise and complaints.</p></div>
+<div class="card"><h3>Product research</h3><p>Requires: conversations about a product or feature. Compare topics before and after a change.</p></div>
+<div class="card"><h3>Marketing campaign analysis</h3><p>Requires: campaign keywords and dates. Compare volume and sentiment inside vs outside the campaign window.</p></div>
+<div class="card"><h3>Competitor conversation analysis</h3><p>Requires: competitor keywords you are authorized to monitor. No competitor integration is connected in this prototype.</p></div>
+<div class="card"><h3>Customer experience improvement</h3><p>Requires: support and review text. Surface repeated friction points with their supporting records.</p></div>
+</div></section>
 
-    <div class="signal" aria-live="off">
-      <div class="signal-label">SIGNAL DISTANCE</div>
-      <div class="signal-value"><span id="signalValue">0</span>%</div>
-      <div class="signal-note">Move closer to the touch point</div>
-    </div>
-  </section>
+<section id="security"><h2>Security &amp; Privacy</h2>
+<div class="card"><p><strong>What this prototype actually does:</strong> everything runs in your browser. Demo sign-in accepts any email/password locally and creates no account. CSV uploads are parsed in your browser and never leave it. There is no database, no server-side AI, and no third-party data processing in this prototype — so no security claim is made about a production system.</p>
+<p><strong>What a production NEXA would need (not yet built):</strong> managed authentication, row-level access control, server-side secrets for any AI provider, upload size/format limits, retention and deletion controls, and audit logging. See SETUP.md.</p>
+<p><strong>Data minimisation in the demo:</strong> demo authors are anonymised IDs (e.g. user_014), not real people. Do not paste real private customer data into this prototype — it has no access controls.</p></div></section>
 
-  <!-- ============ IN MOTION ============ -->
-  <section id="motion" aria-label="In motion">
-    <canvas id="web" class="field" aria-hidden="true"></canvas>
+<section id="demo"><h2>Request a demo</h2>
+<div class="card"><p>This form validates in your browser and stores nothing server-side. Submitting it shows a success message only — it does not send an email or create an account.</p>
+<form id="demoForm" novalidate>
+<label for="dName">Name</label><input id="dName" required autocomplete="name">
+<label for="dEmail">Work email</label><input id="dEmail" type="email" required autocomplete="email">
+<label for="dOrg">Organisation (optional)</label><input id="dOrg">
+<label for="dMsg">What would you like to understand about your audience?</label><textarea id="dMsg" rows="3" required></textarea>
+<p class="err hidden" id="demoErr" role="alert"></p>
+<p><button class="btn" type="submit" id="demoSubmit">Request a demo</button></p>
+<p class="ok hidden" id="demoOk" role="status">Thanks — demo request recorded locally in this browser only. Nothing was sent to a server, and no account was created. A real product would email the NEXA team from here.</p>
+</form></div></section>
 
-    <div class="content motion-content">
-      <p class="label reveal">02 &mdash; IN MOTION</p>
-      <h2 class="reveal reveal-d1">Intelligence that grows,<br><em>not guesses.</em></h2>
-      <p class="motion-note reveal reveal-d2">Live signals branch, connect and settle into patterns you can act on &mdash; as they happen, not after the fact.</p>
-    </div>
-  </section>
+<section id="privacy"><h2>Privacy (prototype)</h2><div class="card"><p>This prototype collects nothing. It sets no analytics, stores demo sign-in details only in the current page session, and keeps CSV imports in browser memory until you reload or clear them. Production privacy terms would need to cover data retention, third-party processors, and deletion requests — none of those systems exist yet.</p></div></section>
+<section id="terms"><h2>Terms (prototype)</h2><div class="card"><p>This prototype is provided for evaluation only. Demo data is fictional. Do not rely on its outputs for business decisions, and do not upload real private data. No warranty, no service-level commitment, and no account relationship is created by using it.</p></div></section>
+
+<section id="app" class="hidden" aria-label="NEXA application demo">
+<div class="demo-banner" role="note">DEMO DATA — Fictional conversations for product demonstration. Not live audience data.</div>
+<h2>NEXA app — demo workspace</h2>
+<p id="appUser" class="small"></p>
+<div class="app-layout">
+<aside class="sidebar"><button class="drawer-btn" id="drawerBtn" aria-expanded="false">☰ App menu</button>
+<nav id="sideNav" aria-label="Application">
+<button data-pane="overview" class="active">Overview</button><button data-pane="signals">Audience Signals</button>
+<button data-pane="topics">Topics</button><button data-pane="sentiment">Sentiment</button>
+<button data-pane="insights">Insights</button><button data-pane="reports">Reports</button>
+<button data-pane="sources">Data Sources</button><button data-pane="alerts">Alerts</button>
+<button data-pane="settings">Settings</button>
+<button id="signOutBtn">Sign out (demo)</button>
+</nav></aside>
+<div>
+<div class="card"><h3>Filters — these change the data shown</h3>
+<div class="filters">
+<div><label for="fDataset">Dataset</label><select id="fDataset"><option value="demo">Demo data</option><option value="imported">My imported CSV data</option></select></div>
+<div><label for="fRange">Date range</label><select id="fRange"><option value="all">All demo dates</option><option value="7">Last 7 days</option><option value="14">Last 14 days</option><option value="30">Last 30 days</option><option value="60">Last 60 days</option></select></div>
+<div><label for="fTopic">Topic</label><select id="fTopic"><option value="">All topics</option></select></div>
+<div><label for="fSent">Sentiment</label><select id="fSent"><option value="">All</option><option>positive</option><option>neutral</option><option>negative</option><option>unknown</option></select></div>
+<div><label for="fSource">Source</label><select id="fSource"><option value="">All sources</option></select></div>
+<div><label for="fKey">Keyword</label><input id="fKey" placeholder="Search record text"></div>
+<div><button class="btn" id="clearFilters">Clear / reset filters</button></div>
+</div>
+<p class="small" id="filterNote"></p></div>
+
+<div id="pane-overview" class="pane">
+<h3>Overview</h3><div class="metrics" id="metrics"></div>
+<p><canvas class="chart" id="volChart" width="900" height="220" role="img" aria-label="Conversation volume chart"></canvas></p>
+<p id="volSummary" class="small"></p>
+<h3>Sentiment at a glance</h3><div id="sentBars"></div><p id="sentSummary" class="small"></p>
+<h3>Top topics</h3><div id="topTopics"></div>
+</div>
+
+<div id="pane-signals" class="pane hidden"><h3>Audience Signals — emerging topics</h3>
+<p class="small">Method: compare the most recent 14 days against the prior 14 days in the current filtered dataset. A topic is called “emerging” only when it has at least 5 records in the recent window and its recent count is at least 1.5× the prior window (prior window of 0 counts only if recent ≥ 8). Low-volume topics are marked “insufficient data” and are not called emerging.</p>
+<div id="signalsList"></div></div>
+
+<div id="pane-topics" class="pane hidden"><h3>Topics</h3><p class="small">Click a topic to see its supporting records in the current filter.</p>
+<div id="topicList"></div><h3 id="topicRecordsTitle">Supporting records</h3><div id="topicRecords"></div></div>
+
+<div id="pane-sentiment" class="pane hidden"><h3>Sentiment</h3><div id="sentBars2"></div><p id="sentDetail" class="small"></p>
+<p>Automated sentiment classification is uncertain and context-dependent. “Unknown” means the record could not be classified with confidence in the demo labelling — it is not a neutral opinion. Treat sentiment shares as a starting point for reading the underlying records, not as objective truth.</p></div>
+
+<div id="pane-insights" class="pane hidden"><h3>Insights — evidence-backed, from the records in view</h3><div id="insightsList"></div>
+<p class="small">Prototype note: these insights are computed from labelled demo data (counts, shares, and movement), not generated by a live AI model. Each one states its supporting record count and its limitations.</p></div>
+
+<div id="pane-reports" class="pane hidden"><h3>Reports</h3>
+<div class="card"><label for="repTitle">Report title</label><input id="repTitle" value="Audience report">
+<button class="btn" id="genReport">Generate report from current filters</button>
+<button class="btn secondary" id="exportCsv">Export filtered records as CSV</button>
+<p class="small">The report uses only the project and date range currently selected. It is generated in your browser.</p></div>
+<div id="reportOut"></div></div>
+
+<div id="pane-sources" class="pane hidden"><h3>Data Sources</h3>
+<div class="card"><p><strong>Demo source:</strong> Fictional “Verdant Tea Co.” conversations — status: Sample data. No live connection. No social platform is connected.</p>
+<p><strong>Imported source:</strong> CSV files you upload here are parsed in your browser only, kept separate from demo data, and labelled as user-imported. Nothing is uploaded to a server.</p></div>
+<div class="card"><h3>Upload a CSV</h3>
+<label for="csvFile">Choose a .csv file (max 2 MB)</label><input type="file" id="csvFile" accept=".csv,text/csv">
+<p class="small">Expected columns (you will map them): text, timestamp, source, author, url. Other columns are ignored.</p>
+<div id="csvMap" class="hidden">
+<p>Map your columns:</p>
+<div class="grid2">
+<div><label for="mapText">Text column</label><select id="mapText"></select></div>
+<div><label for="mapTime">Timestamp column</label><select id="mapTime"></select></div>
+<div><label for="mapSource">Source column</label><select id="mapSource"></select></div>
+<div><label for="mapAuthor">Author column</label><select id="mapAuthor"></select></div>
+<div><label for="mapUrl">URL column</label><select id="mapUrl"></select></div>
+</div>
+<p><button class="btn" id="csvPreviewBtn">Preview first records</button></p>
+<div id="csvPreview"></div>
+<p><button class="btn hidden" id="csvConfirmBtn">Confirm import</button></p>
+</div>
+<p class="err" id="csvErr" role="alert"></p><p class="ok" id="csvOk" role="status"></p>
+<h3>Import history</h3><div id="importHistory"><p class="small">No imports yet.</p></div>
+</div></div>
+
+<div id="pane-alerts" class="pane hidden"><h3>Alerts</h3>
+<p class="small">Rules are stored in this browser session only and evaluated against the current dataset. They are <strong>not real-time</strong> and send no notifications — evaluation happens when you click “Evaluate rules”.</p>
+<div class="card"><div class="grid2">
+<div><label for="aType">Rule type</label><select id="aType"><option value="topic">Topic volume threshold</option><option value="neg">Negative sentiment share threshold</option><option value="key">Keyword frequency threshold</option></select></div>
+<div><label for="aParam">Topic / keyword</label><input id="aParam" placeholder="e.g. delivery or spiced pear"></div>
+<div><label for="aVal">Threshold (count, or % for sentiment)</label><input id="aVal" type="number" min="1" value="5"></div>
+<div><label>&nbsp;</label><button class="btn" id="aAdd">Add rule</button></div>
+</div></div>
+<div id="alertList"></div><p><button class="btn secondary" id="aEval">Evaluate rules against current data</button></p><div id="alertEval"></div></div>
+
+<div id="pane-settings" class="pane hidden"><h3>Settings — demo project</h3>
+<div class="card"><label for="sName">Project name</label><input id="sName" value="Verdant Tea Co. — demo">
+<label for="sDesc">Description</label><textarea id="sDesc" rows="2">Fictional demo project for evaluating NEXA. No live data.</textarea>
+<label for="sKeys">Keywords to monitor (comma-separated)</label><input id="sKeys" value="verdant, tea, spiced pear, packaging, delivery">
+<p><button class="btn" id="sSave">Save (local only)</button> <span class="ok hidden" id="sOk">Saved in this browser session.</span></p>
+<p><button class="btn secondary" id="sDelete">Delete project (demo)</button></p>
+<p class="small">Deleting the demo project clears the demo view in this session and shows a “project deleted” state; reload the page to restore the demo. This is a prototype behaviour, not a production deletion flow.</p>
+<div id="deletedNote" class="hidden"><p class="err"><strong>Demo project deleted in this session.</strong> Reload the page to restore it.</p></div>
+</div></div>
+
+</div></div></section>
 </main>
+<footer class="site"><p><strong>NEXA.</strong> Prototype only — no live data, no real authentication, no backend. <a href="#privacy">Privacy</a> · <a href="#terms">Terms</a> · <a href="#security">Security</a></p>
+<p class="small">Demo data is fictional. Do not upload real private data to this prototype.</p></footer>
 
-<footer>
-  <span>&copy; 2026 NEXA</span>
-  <span>Audience intelligence, grown not guessed.</span>
-</footer>
+<div id="signinDialog" class="hidden" role="dialog" aria-modal="true" aria-labelledby="signinTitle" style="position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:50">
+<div class="card" style="max-width:420px;width:92%">
+<h2 id="signinTitle">Sign in — DEMO ONLY</h2>
+<p class="small"><strong>This is not real authentication.</strong> Any email and password are accepted locally, no account is created, and nothing leaves your browser.</p>
+<form id="signinForm"><label for="siEmail">Email</label><input id="siEmail" type="email" required>
+<label for="siPass">Password (any value, demo only)</label><input id="siPass" type="password" required>
+<p><button class="btn" type="submit">Continue to demo app</button> <button class="btn secondary" type="button" id="signinCancel">Cancel</button></p></form>
+</div></div>
 
 <script>
-(function () {
-  'use strict';
+"use strict";
+// ---------- Deterministic demo dataset: fictional "Verdant Tea Co." ----------
+var TOPICS=[
+ {name:"taste",texts:["Love the new Verdant brew, smooth and not bitter at all","The tea tastes flat this batch, something changed","Really enjoying the citrus notes in the morning blend"]},
+ {name:"packaging",texts:["The compostable pouch is great but it tears too easily","Packaging looks beautiful on the shelf","Wish the pouch resealed properly after opening"]},
+ {name:"delivery",texts:["Delivery arrived two days late and the box was dented","Fast delivery this time, nicely packed","Still waiting on my order from last week"]},
+ {name:"price",texts:["A bit pricey for a daily tea but the quality shows","Price went up again, might switch brands","Good value in the subscription bundle"]},
+ {name:"sustainability",texts:["Love that the sourcing is transparent and traceable","Is the compostable claim actually certified?","Great to see the refill programme expanding"]},
+ {name:"customer service",texts:["Support replied within an hour and replaced my order","Could not reach anyone about my refund","Friendly help on the phone, issue sorted quickly"]},
+ {name:"spiced pear",texts:["Spiced pear is the best flavour you have made","Just tried spiced pear, instantly my favourite","Spiced pear sold out again, please restock"]}
+];
+var SOURCES=["X","Instagram","Reddit","Review site","Support inbox"];
+var SENTIMENTS=["positive","neutral","negative","unknown"];
+function seeded(i){var x=Math.sin(i*127.1+311.7)*10000;return x-Math.floor(x);}
+var DEMO=[];var id=1;
+for(var d=0;d<72;d++){
+ var day=new Date(Date.UTC(2026,7,18));day.setUTCDate(day.getUTCDate()+d);
+ // spiced pear is the emerging topic: rare early, frequent in last 14 days
+ var topicIdx;
+ if(d>=58){topicIdx=(d%7===0||d%7===3)?6:(d%6);}else if(d>=45){topicIdx=(d%9===0)?6:(d%6);}else{topicIdx=d%6;}
+ var t=TOPICS[topicIdx];var txt=t.texts[Math.floor(seeded(d*3+topicIdx)*t.texts.length)];
+ var sent=txt.indexOf("Love")>-1||txt.indexOf("Great")>-1||txt.indexOf("best")>-1||txt.indexOf("favourite")>-1||txt.indexOf("Fast")>-1||txt.indexOf("Friendly")>-1||txt.indexOf("Good")>-1?"positive":
+   (txt.indexOf("flat")>-1||txt.indexOf("late")>-1||txt.indexOf("tears")>-1||txt.indexOf("pricey")>-1||txt.indexOf("Price went")>-1||txt.indexOf("Still waiting")>-1||txt.indexOf("Could not")>-1?"negative":
+   (d%11===0?"unknown":"neutral"));
+ DEMO.push({id:"demo_"+(id++),text:txt,ts:day.toISOString().slice(0,10),source:SOURCES[Math.floor(seeded(d*7)*SOURCES.length)],author:"user_"+String(100+Math.floor(seeded(d*13)*80)),topic:t.name,sentiment:sent,url:"https://example.invalid/records/"+id});
+}
+// a few extra recent spiced pear records to make the baseline comparison clear
+for(var k=0;k<6;k++){var dd=new Date(Date.UTC(2026,9,23+k));DEMO.push({id:"demo_"+(id++),text:"Spiced pear is the best flavour you have made",ts:dd.toISOString().slice(0,10),source:SOURCES[k%SOURCES.length],author:"user_"+(200+k),topic:"spiced pear",sentiment:"positive",url:"https://example.invalid/records/"+id});}
+var IMPORTED=[];var IMPORT_HISTORY=[];var ALERTS=[];var SELECTED_TOPIC="";var PROJECT_DELETED=false;
+var $=function(s){return document.querySelector(s);};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function currentDataset(){return $("#fDataset").value==="imported"?IMPORTED:DEMO;}
+function filtered(){
+ var ds=currentDataset(),range=$("#fRange").value,topic=$("#fTopic").value,sent=$("#fSent").value,src=$("#fSource").value,key=$("#fKey").value.trim().toLowerCase();
+ var maxDate=ds.length?ds.map(function(r){return r.ts;}).sort().pop():"2026-10-28";
+ var cutoff=null;if(range!=="all"){var c=new Date(maxDate);c.setUTCDate(c.getUTCDate()-parseInt(range,10)+1);cutoff=c.toISOString().slice(0,10);}
+ return ds.filter(function(r){
+  return (!cutoff||r.ts>=cutoff)&&(!topic||r.topic===topic)&&(!sent||r.sentiment===sent)&&(!src||r.source===src)&&(!key||r.text.toLowerCase().indexOf(key)>-1);
+ });
+}
+function countsBy(arr,field){var o={};arr.forEach(function(r){o[r[field]]=(o[r[field]]||0)+1;});return o;}
+function fillSelects(){
+ var topics={};DEMO.concat(IMPORTED).forEach(function(r){topics[r.topic]=1;});
+ var srcs={};DEMO.concat(IMPORTED).forEach(function(r){srcs[r.source]=1;});
+ var tSel=$("#fTopic"),sSel=$("#fSource"),curT=tSel.value,curS=sSel.value;
+ tSel.innerHTML='<option value="">All topics</option>'+Object.keys(topics).sort().map(function(t){return '<option>'+esc(t)+'</option>';}).join("");
+ sSel.innerHTML='<option value="">All sources</option>'+Object.keys(srcs).sort().map(function(s){return '<option>'+esc(s)+'</option>';}).join("");
+ tSel.value=curT;sSel.value=curS;
+}
+function renderMetrics(rows){
+ var all=currentDataset();
+ // prior period = same length immediately before the selected range, on the full dataset
+ var range=$("#fRange").value,days=range==="all"?all.length:parseInt(range,10);
+ var maxDate=all.length?all.map(function(r){return r.ts;}).sort().pop():"2026-10-28";
+ var end=new Date(maxDate),start=new Date(maxDate);if(range!=="all")start.setUTCDate(start.getUTCDate()-days+1);
+ var priorEnd=new Date(start);priorEnd.setUTCDate(priorEnd.getUTCDate()-1);var priorStart=new Date(priorEnd);priorStart.setUTCDate(priorStart.getUTCDate()-days+1);
+ var prior=all.filter(function(r){return r.ts>=priorStart.toISOString().slice(0,10)&&r.ts<=priorEnd.toISOString().slice(0,10);}).length;
+ var change=prior?Math.round((rows.length-prior)/prior*100):(rows.length?100:0);
+ var changeLabel=range==="all"?"— (full dataset, no prior window)":((change>=0?"+":"")+change+"%");
+ var sc=countsBy(rows,"sentiment"),tc=countsBy(rows,"topic");
+ var tot=rows.length||1;
+ var emerging=emergingTopics(rows).filter(function(s){return s.status==="emerging";}).length;
+ $("#metrics").innerHTML=[
+  ["Total conversations",rows.length,"in the current filter"],
+  ["Volume change", changeLabel,"vs prior "+(range==="all"?"period":days+" days")+" ("+prior+" records)"],
+  ["Positive", (sc.positive||0)+" ("+Math.round((sc.positive||0)/tot*100)+"%)","of filtered records"],
+  ["Distinct topics",Object.keys(tc).length,"topics present"],
+  ["Emerging topics",emerging,"meeting the stated baseline test"]
+ ].map(function(m){return '<div class="metric"><span>'+esc(m[0])+'</span><b>'+esc(String(m[1]))+'</b><span class="small">'+esc(m[2])+'</span></div>';}).join("");
+ $("#filterNote").textContent=rows.length+" of "+all.length+" records in the selected dataset match the current filters.";
+}
+function renderVolume(rows){
+ var c=$("#volChart"),ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);
+ var weeks={};rows.forEach(function(r){var d=new Date(r.ts+"T00:00:00Z");var wk=new Date(d);wk.setUTCDate(wk.getUTCDate()-wk.getUTCDay());var k=wk.toISOString().slice(0,10);weeks[k]=(weeks[k]||0)+1;});
+ var keys=Object.keys(weeks).sort(),max=Math.max.apply(null,keys.map(function(k){return weeks[k];}).concat([1]));
+ ctx.strokeStyle="#2e5a3f";ctx.fillStyle="#2e5a3f";ctx.font="12px system-ui";
+ keys.forEach(function(k,i){var x=40+i*(820/Math.max(keys.length,1)),h=weeks[k]/max*160;ctx.fillRect(x,190-h,Math.max(10,820/keys.length-8),h);ctx.fillText(String(weeks[k]),x,180-h);ctx.fillText(k.slice(5),x,208);});
+ $("#volSummary").textContent=keys.length?("Weekly conversation counts, "+keys[0]+" to "+keys[keys.length-1]+". Highest week: "+max+" conversations. Chart is also summarised here in text for screen readers."):"No records in the current filter — try clearing a filter.";
+}
+function sentBarsHTML(rows){
+ var sc=countsBy(rows,"sentiment"),tot=rows.length||1;
+ return ["positive","neutral","negative","unknown"].map(function(s){var n=sc[s]||0,p=Math.round(n/tot*100);
+  return '<div class="bar-row"><span>'+s+'</span><span class="bar"><i style="width:'+p+'%"></i></span><span>'+n+' ('+p+'%)</span></div>';}).join("");
+}
+function emergingTopics(rows){
+ var ds=rows;if(!ds.length)return [];
+ var maxDate=ds.map(function(r){return r.ts;}).sort().pop();var end=new Date(maxDate),recentStart=new Date(end);recentStart.setUTCDate(recentStart.getUTCDate()-13);
+ var priorEnd=new Date(recentStart);priorEnd.setUTCDate(priorEnd.getUTCDate()-1);var priorStart=new Date(priorEnd);priorStart.setUTCDate(priorStart.getUTCDate()-13);
+ function inWin(r,a,b){return r.ts>=a.toISOString().slice(0,10)&&r.ts<=b.toISOString().slice(0,10);}
+ var topics={};ds.forEach(function(r){topics[r.topic]=1;});
+ return Object.keys(topics).sort().map(function(t){
+  var rec=ds.filter(function(r){return r.topic===t&&inWin(r,recentStart,end);});
+  var pri=ds.filter(function(r){return r.topic===t&&inWin(r,priorStart,priorEnd);});
+  var status=(rec.length>=5&&rec.length>=1.5*pri.length)?"emerging":(rec.length>=8&&pri.length===0?"emerging":"insufficient data");
+  var first=rec.length?rec.map(function(r){return r.ts;}).sort()[0]:"—",last=rec.length?rec.map(function(r){return r.ts;}).sort().pop():"—";
+  var sc=countsBy(rec,"sentiment");
+  return {topic:t,recent:rec.length,prior:pri.length,status:status,first:first,last:last,records:rec,sent:sc};
+ });
+}
 
-  /* ---------- Reveal on scroll ---------- */
-  var reveals = document.querySelectorAll('.reveal');
-  if ('IntersectionObserver' in window) {
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.15 });
-    reveals.forEach(function (el) { observer.observe(el); });
-  } else {
-    reveals.forEach(function (el) { el.classList.add('visible'); });
-  }
-
-  /* ---------- Shared helpers ---------- */
-  var isSmall = window.matchMedia('(max-width: 820px)').matches;
-  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function setupCanvas(canvas) {
-    var ctx = canvas.getContext('2d');
-    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    function resize() {
-      var rect = canvas.parentElement.getBoundingClientRect();
-      canvas.width = Math.max(1, Math.floor(rect.width * dpr));
-      canvas.height = Math.max(1, Math.floor(rect.height * dpr));
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      return { w: rect.width, h: rect.height };
-    }
-    return { ctx: ctx, resize: resize };
-  }
-
-  /* ============================================================
-     HERO — particle hands reaching toward each other
-     Hands are built from a palm ellipse + five finger capsules
-     each, sampled as points. No photo, no traced image.
-     Touch point: centre-right, where the two middle
-     fingertips almost meet.
-     ============================================================ */
-  var handsCanvas = document.getElementById('hands');
-  var hands = setupCanvas(handsCanvas);
-  var signalEl = document.getElementById('signalValue');
-
-  var mouse = { x: -9999, y: -9999, active: false };
-  var touchPoint = { x: 0.62, y: 0.47 }; // normalised
-  var signalShown = 0;
-
-  function capsulePoints(cx1, cy1, cx2, cy2, r, count, out) {
-    var dx = cx2 - cx1, dy = cy2 - cy1;
-    var len = Math.hypot(dx, dy) || 1;
-    var ux = dx / len, uy = dy / len;
-    var px = -uy, py = ux;
-    for (var i = 0; i < count; i++) {
-      var t = Math.random();
-      // bias slightly toward the tip so fingertips read clearly
-      var along = (t * 0.7 + Math.random() * 0.3) * len;
-      var across = (Math.random() * 2 - 1) * r * Math.sqrt(Math.random());
-      out.push({
-        bx: cx1 + ux * along + px * across,
-        by: cy1 + uy * along + py * across
-      });
-    }
-  }
-
-  function ellipsePoints(cx, cy, rx, ry, rot, count, out) {
-    var cos = Math.cos(rot), sin = Math.sin(rot);
-    for (var i = 0; i < count; i++) {
-      var a = Math.random() * Math.PI * 2;
-      var rr = Math.sqrt(Math.random());
-      var ex = Math.cos(a) * rr * rx, ey = Math.sin(a) * rr * ry;
-      out.push({
-        bx: cx + ex * cos - ey * sin,
-        by: cy + ex * sin + ey * cos
-      });
-    }
-  }
-
-  // Hand definitions in normalised coordinates (0..1).
-  // Left hand: palm left, fingers pointing right toward the touch point.
-  // Right hand: palm right, fingers pointing left toward the touch point.
-  function buildHandParticles() {
-    var pts = [];
-    // Left hand
-    ellipsePoints(0.30, 0.58, 0.095, 0.115, -0.26, 620, pts);
-    capsulePoints(0.36, 0.50, 0.56, 0.44, 0.020, 180, pts); // index
-    capsulePoints(0.37, 0.55, 0.60, 0.47, 0.021, 200, pts); // middle — nearest the touch
-    capsulePoints(0.37, 0.60, 0.57, 0.55, 0.019, 180, pts); // ring
-    capsulePoints(0.36, 0.65, 0.52, 0.63, 0.016, 140, pts); // pinky
-    capsulePoints(0.32, 0.66, 0.43, 0.75, 0.021, 160, pts); // thumb
-    // Right hand
-    ellipsePoints(0.79, 0.42, 0.095, 0.115, 0.26, 620, pts);
-    capsulePoints(0.72, 0.34, 0.67, 0.40, 0.020, 180, pts); // index
-    capsulePoints(0.71, 0.39, 0.66, 0.44, 0.021, 200, pts); // middle — nearest the touch
-    capsulePoints(0.71, 0.44, 0.68, 0.50, 0.019, 180, pts); // ring
-    capsulePoints(0.70, 0.49, 0.65, 0.56, 0.016, 140, pts); // pinky
-    capsulePoints(0.74, 0.50, 0.64, 0.59, 0.021, 160, pts); // thumb
-    return pts;
-  }
-
-  var handBase = buildHandParticles();
-  var handParticles = handBase.map(function (p) {
-    var blue = Math.random() < 0.18;
-    return {
-      bx: p.bx, by: p.by,
-      size: 0.6 + Math.random() * 1.3,
-      phase: Math.random() * Math.PI * 2,
-      speed: 0.4 + Math.random() * 0.8,
-      blue: blue,
-      colour: blue ? '168,200,255' : '255,255,255'
-    };
+function recordRow(r){return '<tr><td>'+esc(r.id)+'</td><td>'+esc(r.text)+'</td><td>'+esc(r.ts)+'</td><td>'+esc(r.source)+'</td><td>'+esc(r.topic)+'</td><td>'+esc(r.sentiment)+'</td></tr>';}
+function recordsTable(rows){if(!rows.length)return '<p class="small">No records match.</p>';return '<table><thead><tr><th>ID</th><th>Text</th><th>Date</th><th>Source</th><th>Topic</th><th>Sentiment</th></tr></thead><tbody>'+rows.map(recordRow).join("")+'</tbody></table>';}
+function renderAll(){
+ if(PROJECT_DELETED){$("#app").innerHTML='<div class="demo-banner">DEMO DATA — project deleted in this session. Reload the page to restore the demo.</div>';return;}
+ var rows=filtered();
+ renderMetrics(rows);renderVolume(rows);
+ $("#sentBars").innerHTML=sentBarsHTML(rows);$("#sentBars2").innerHTML=sentBarsHTML(rows);
+ var sc=countsBy(rows,"sentiment"),tot=rows.length||1;
+ $("#sentSummary").textContent="Positive "+(sc.positive||0)+", neutral "+(sc.neutral||0)+", negative "+(sc.negative||0)+", unknown/unclassified "+(sc.unknown||0)+" of "+rows.length+" records.";
+ $("#sentDetail").textContent="Unclassified share: "+Math.round((sc.unknown||0)/tot*100)+"% ("+(sc.unknown||0)+" of "+rows.length+"). Sentiment is a label on demo data, not a measured fact about real customers.";
+ var tc=countsBy(rows,"topic");
+ var sorted=Object.keys(tc).sort(function(a,b){return tc[b]-tc[a];});
+ $("#topTopics").innerHTML=sorted.slice(0,6).map(function(t){return '<p><button class="topic-btn" data-topic="'+esc(t)+'">'+esc(t)+' — '+tc[t]+' records</button></p>';}).join("")||'<p class="small">No topics in this filter.</p>';
+ $("#topicList").innerHTML=sorted.map(function(t){return '<p><button class="topic-btn" data-topic="'+esc(t)+'">'+esc(t)+' — '+tc[t]+' records</button></p>';}).join("")||'<p class="small">No topics in this filter.</p>';
+ document.querySelectorAll(".topic-btn").forEach(function(b){b.addEventListener("click",function(){SELECTED_TOPIC=b.getAttribute("data-topic");showTopicRecords();});});
+ // signals
+ var sigs=emergingTopics(rows);
+ $("#signalsList").innerHTML=sigs.map(function(s){
+  var badge=s.status==="emerging"?'<span class="tag">EMERGING</span>':'<span class="tag">Insufficient data — not called emerging</span>';
+  return '<div class="card"><h3>'+esc(s.topic)+' '+badge+'</h3><p>Recent 14 days: '+s.recent+' records; prior 14 days: '+s.prior+' records. First observed (recent window): '+s.first+'; most recent: '+s.last+'. Sentiment in window: positive '+(s.sent.positive||0)+', neutral '+(s.sent.neutral||0)+', negative '+(s.sent.negative||0)+', unknown '+(s.sent.unknown||0)+'. Sources: '+esc(s.records.map(function(r){return r.source;}).filter(function(v,i,a){return a.indexOf(v)===i;}).join(", "))+'</p><p class="small">Record IDs: '+esc(s.records.map(function(r){return r.id;}).join(", ")||"none")+'</p><p class="small">Data sufficiency: '+(s.status==="emerging"?"sufficient for the stated test":"below the stated threshold — do not treat as a trend")+'.</p></div>';}).join("")||'<p class="small">No topics in this filter.</p>';
+ // insights (computed, not AI-generated)
+ var top=sorted[0],negShare=tot?Math.round((sc.negative||0)/tot*100):0;
+ var ins=[];
+ if(top)ins.push({t:"Most discussed topic: "+top,body:top+" accounts for "+tc[top]+" of "+rows.length+" filtered records. Read its supporting records before acting on it.",n:tc[top],lim:"Counts alone do not show why people mention it."});
+ ins.push({t:"Negative sentiment is "+negShare+"% of the current view",body:"That share is computed from "+rows.length+" records. If it rises, read the negative records for that topic rather than assuming a single cause.",n:sc.negative||0,lim:"Sentiment labels are demo labels and can be wrong."});
+ var em=sigs.filter(function(s){return s.status==="emerging";});
+ if(em.length)ins.push({t:"Emerging signal worth checking: "+em[0].topic,body:"Recent 14-day count ("+em[0].recent+") is at least 1.5× the prior 14 days ("+em[0].prior+"). Suggested next step: read the supporting records and check whether the rise is one event or a sustained pattern.",n:em[0].recent,lim:"A 14-day comparison on a small dataset is weak evidence."});
+ else ins.push({t:"No topic meets the emerging test in this view",body:"That is itself a finding: do not invent a trend from a small rise. Widen the date range or wait for more records.",n:0,lim:"Absence of a signal is not proof nothing is changing."});
+ $("#insightsList").innerHTML=ins.map(function(i){return '<div class="card"><h3>'+esc(i.t)+'</h3><p>'+esc(i.body)+'</p><p class="small">Supporting records: '+i.n+' · Limitation: '+esc(i.lim)+'</p></div>';}).join("");
+ showTopicRecords();
+}
+function showTopicRecords(){
+ var rows=filtered().filter(function(r){return !SELECTED_TOPIC||r.topic===SELECTED_TOPIC;});
+ $("#topicRecordsTitle").textContent=SELECTED_TOPIC?("Supporting records — "+SELECTED_TOPIC):"Supporting records — all topics in filter";
+ $("#topicRecords").innerHTML=recordsTable(rows.slice(0,50))+(rows.length>50?'<p class="small">Showing first 50 of '+rows.length+' records.</p>':"");
+}
+// panes
+document.querySelectorAll("#sideNav button[data-pane]").forEach(function(b){
+ b.addEventListener("click",function(){
+  document.querySelectorAll("#sideNav button[data-pane]").forEach(function(x){x.classList.remove("active");});
+  b.classList.add("active");
+  document.querySelectorAll(".pane").forEach(function(p){p.classList.add("hidden");});
+  $("#pane-"+b.getAttribute("data-pane")).classList.remove("hidden");
+  document.querySelector(".sidebar").classList.remove("open");
+ });
+});
+// filters
+["fDataset","fRange","fTopic","fSent","fSource"].forEach(function(id){$("#"+id).addEventListener("change",renderAll);});
+$("#fKey").addEventListener("input",renderAll);
+$("#clearFilters").addEventListener("click",function(){$("#fRange").value="all";$("#fTopic").value="";$("#fSent").value="";$("#fSource").value="";$("#fKey").value="";SELECTED_TOPIC="";renderAll();});
+// sign-in demo
+function openApp(email){
+ $("#app").classList.remove("hidden");$("#signinDialog").classList.add("hidden");
+ $("#appUser").textContent=email?("Signed in (demo only) as "+email+" — no account was created."):"Demo workspace — no account was created.";
+ document.getElementById("app").scrollIntoView({behavior:"smooth"});fillSelects();renderAll();
+}
+document.querySelectorAll("[data-signin]").forEach(function(b){b.addEventListener("click",function(){$("#signinDialog").classList.remove("hidden");});});
+$("#signinCancel").addEventListener("click",function(){$("#signinDialog").classList.add("hidden");});
+$("#signinForm").addEventListener("submit",function(e){e.preventDefault();openApp($("#siEmail").value);});
+$("#exploreBtn").addEventListener("click",function(e){e.preventDefault();openApp("");});
+$("#signOutBtn").addEventListener("click",function(){$("#app").classList.add("hidden");window.scrollTo(0,0);});
+$("#menuBtn").classList.remove("hidden");
+$("#menuBtn").addEventListener("click",function(){$("#navLinks").classList.toggle("open");});
+$("#drawerBtn").addEventListener("click",function(){document.querySelector(".sidebar").classList.toggle("open");});
+// demo request form
+$("#demoForm").addEventListener("submit",function(e){e.preventDefault();
+ var err="";
+ if(!$("#dName").value.trim())err="Please enter your name.";
+ else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($("#dEmail").value))err="Please enter a valid email address.";
+ else if(!$("#dMsg").value.trim())err="Please say what you would like to understand.";
+ $("#demoErr").textContent=err;$("#demoErr").classList.toggle("hidden",!err);$("#demoOk").classList.add("hidden");
+ if(err)return;
+ var btn=$("#demoSubmit");btn.disabled=true;btn.textContent="Sending… (local only)";
+ setTimeout(function(){btn.disabled=false;btn.textContent="Request a demo";$("#demoOk").classList.remove("hidden");},600);
+});
+// reports + export
+$("#genReport").addEventListener("click",function(){
+ var rows=filtered(),sc=countsBy(rows,"sentiment"),tc=countsBy(rows,"topic");
+ var sorted=Object.keys(tc).sort(function(a,b){return tc[b]-tc[a];});
+ var sigs=emergingTopics(rows).filter(function(s){return s.status==="emerging";});
+ $("#reportOut").innerHTML='<div class="card"><h3>'+esc($("#repTitle").value||"Audience report")+'</h3>'
+ +'<p><strong>Executive summary.</strong> '+rows.length+' records in the current filter (dataset: '+esc($("#fDataset").value)+', date range: '+esc($("#fRange").value)+'). Top topic: '+(sorted[0]||"none")+'.</p>'
+ +'<p><strong>Key metrics.</strong> Positive '+(sc.positive||0)+', neutral '+(sc.neutral||0)+', negative '+(sc.negative||0)+', unknown '+(sc.unknown||0)+'.</p>'
+ +'<p><strong>Top topics.</strong> '+esc(sorted.slice(0,5).map(function(t){return t+" ("+tc[t]+")";}).join(", ")||"none")+'.</p>'
+ +'<p><strong>Emerging signals.</strong> '+esc(sigs.map(function(s){return s.topic+" (recent "+s.recent+", prior "+s.prior+")";}).join(", ")||"none meet the stated test")+'.</p>'
+ +'<p><strong>Findings &amp; actions.</strong> Read the supporting records for the top and emerging topics before acting; do not treat demo sentiment as real customer opinion.</p>'
+ +'<p><strong>Sources, period, limitations, methodology.</strong> Sources in view: '+esc(Object.keys(countsBy(rows,"source")).join(", ")||"none")+'. Period: current filter. Limitations: fictional demo data, small sample, sentiment labels are demo labels. Methodology: counts and 14-day vs prior-14-day comparison as stated on the Signals page.</p></div>';
+});
+$("#exportCsv").addEventListener("click",function(){
+ var rows=filtered();if(!rows.length){alert("No records to export in the current filter.");return;}
+ var head="id,text,timestamp,source,author,topic,sentiment,url";
+ var body=rows.map(function(r){return [r.id,r.text,r.ts,r.source,r.author,r.topic,r.sentiment,r.url].map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(",");});
+ var blob=new Blob([head+"\n"+body.join("\n")],{type:"text/csv"});
+ var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="nexa-filtered-records.csv";a.click();URL.revokeObjectURL(a.href);
+});
+// alerts
+$("#aAdd").addEventListener("click",function(){
+ var type=$("#aType").value,param=$("#aParam").value.trim(),val=parseFloat($("#aVal").value);
+ if(!param||isNaN(val)){alert("Enter a topic/keyword and a threshold.");return;}
+ ALERTS.push({type:type,param:param,val:val});renderAlerts();
+});
+function renderAlerts(){
+ $("#alertList").innerHTML=ALERTS.map(function(a,i){return '<div class="card"><p><strong>'+esc(a.type)+'</strong> — '+esc(a.param)+' — threshold '+a.val+' <button class="btn small secondary" data-del="'+i+'">Delete</button></p></div>';}).join("")||'<p class="small">No rules yet.</p>';
+ document.querySelectorAll("[data-del]").forEach(function(b){b.addEventListener("click",function(){ALERTS.splice(parseInt(b.getAttribute("data-del"),10),1);renderAlerts();});});
+}
+$("#aEval").addEventListener("click",function(){
+ var rows=filtered(),sc=countsBy(rows,"sentiment"),tot=rows.length||1;
+ var out=ALERTS.map(function(a){
+  var hit=false,detail="";
+  if(a.type==="topic"){var n=rows.filter(function(r){return r.topic.toLowerCase()===a.param.toLowerCase();}).length;hit=n>=a.val;detail=n+" records for topic "+a.param;}
+  else if(a.type==="neg"){var p=Math.round((sc.negative||0)/tot*100);hit=p>=a.val;detail="Negative share "+p+"%";}
+  else{var n2=rows.filter(function(r){return r.text.toLowerCase().indexOf(a.param.toLowerCase())>-1;}).length;hit=n2>=a.val;detail=n2+" records mentioning "+a.param;}
+  return '<p>'+(hit?'<strong>TRIGGERED:</strong> ':'Not triggered: ')+esc(detail)+' (threshold '+a.val+')</p>';
+ }).join("")||'<p class="small">No rules to evaluate.</p>';
+ $("#alertEval").innerHTML='<div class="card"><p class="small">Evaluated on the current filtered dataset only — not real-time, no notification sent.</p>'+out+'</div>';
+});
+// settings
+$("#sSave").addEventListener("click",function(){$("#sOk").classList.remove("hidden");});
+$("#sDelete").addEventListener("click",function(){if(confirm("Delete the demo project in this session? Reloading the page restores it.")){PROJECT_DELETED=true;renderAll();}});
+// CSV upload
+var CSV_HEADERS=[],CSV_ROWS=[];
+function parseCSV(text){
+ var rows=[],cur=[],val="",inq=false;
+ for(var i=0;i<text.length;i++){var c=text[i];
+  if(inq){if(c==='"'){if(text[i+1]==='"'){val+='"';i++;}else inq=false;}else val+=c;}
+  else if(c==='"')inq=true;else if(c===","){cur.push(val);val="";}else if(c==="\n"||c==="\r"){if(c==="\r"&&text[i+1]==="\n")i++;cur.push(val);rows.push(cur);cur=[];val="";}
+  else val+=c;}
+ if(val!==""||cur.length){cur.push(val);rows.push(cur);}
+ return rows.filter(function(r){return r.some(function(v){return v.trim()!=="";});});
+}
+$("#csvFile").addEventListener("change",function(){
+ var f=this.files[0];$("#csvErr").textContent="";$("#csvOk").textContent="";
+ if(!f)return;
+ if(!/\.csv$/i.test(f.name)){ $("#csvErr").textContent="Unsupported format: only .csv files are accepted.";return;}
+ if(f.size>2*1024*1024){ $("#csvErr").textContent="File too large: maximum 2 MB.";return;}
+ var reader=new FileReader();
+ reader.onload=function(){try{
+  var rows=parseCSV(reader.result);
+  if(rows.length<2){ $("#csvErr").textContent="File has no data rows.";return;}
+  CSV_HEADERS=rows[0];CSV_ROWS=rows.slice(1);
+  ["mapText","mapTime","mapSource","mapAuthor","mapUrl"].forEach(function(id){
+   var sel=$("#"+id);sel.innerHTML='<option value="">— none —</option>'+CSV_HEADERS.map(function(h,i){return '<option value="'+i+'">'+esc(h)+'</option>';}).join("");
   });
-  // Fewer particles on small screens, per spec.
-  if (isSmall) { handParticles = handParticles.filter(function (_, i) { return i % 2 === 0; }); }
-
-  var heroSize = hands.resize();
-  window.addEventListener('resize', function () { heroSize = hands.resize(); });
-
-  function trackCursor(e) {
-    var rect = handsCanvas.getBoundingClientRect();
-    mouse.x = e.clientX - rect.left;
-    mouse.y = e.clientY - rect.top;
-    mouse.active = true;
-  }
-  window.addEventListener('mousemove', trackCursor);
-  window.addEventListener('touchmove', function (e) {
-    if (e.touches && e.touches[0]) {
-      trackCursor(e.touches[0]);
-    }
-  }, { passive: true });
-
-  function drawHands(time) {
-    var ctx = hands.ctx;
-    var w = heroSize.w, h = heroSize.h;
-    ctx.clearRect(0, 0, w, h);
-    var t = time / 1000;
-    var tx = touchPoint.x * w, ty = touchPoint.y * h;
-
-    for (var i = 0; i < handParticles.length; i++) {
-      var p = handParticles[i];
-      var x = p.bx * w, y = p.by * h;
-      // Gentle shimmer / drift
-      var driftX = Math.sin(t * p.speed + p.phase) * 2.2;
-      var driftY = Math.cos(t * p.speed * 0.8 + p.phase) * 2.2;
-      x += driftX; y += driftY;
-      // Subtle cursor response: push slightly away when very close
-      if (mouse.active) {
-        var dx = x - mouse.x, dy = y - mouse.y;
-        var d = Math.hypot(dx, dy);
-        if (d < 90 && d > 0.01) {
-          var push = (90 - d) / 90 * 10;
-          x += (dx / d) * push;
-          y += (dy / d) * push;
-        }
-      }
-      var twinkle = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(t * 1.4 + p.phase * 2));
-      ctx.beginPath();
-      ctx.arc(x, y, p.size, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(' + p.colour + ',' + twinkle.toFixed(3) + ')';
-      ctx.fill();
-    }
-
-    // Signal distance: 0% far, up to ~90% at the touch point.
-    var target = 0;
-    if (mouse.active) {
-      var dist = Math.hypot(mouse.x - tx, mouse.y - ty);
-      var maxDist = Math.hypot(w, h) * 0.62;
-      target = Math.max(0, Math.min(90, 90 * (1 - dist / maxDist)));
-    }
-    signalShown += (target - signalShown) * 0.08;
-    signalEl.textContent = Math.round(signalShown).toString();
-  }
-
-  /* ============================================================
-     SECTION 02 — glowing particle neural web
-     Nodes drift, link when close, branch and flow.
-     ============================================================ */
-  var webCanvas = document.getElementById('web');
-  var web = setupCanvas(webCanvas);
-  var webSize = web.resize();
-  window.addEventListener('resize', function () { webSize = web.resize(); });
-
-  var nodeCount = isSmall ? 42 : 88;
-  var nodes = [];
-  for (var n = 0; n < nodeCount; n++) {
-    nodes.push({
-      x: Math.random(), y: Math.random(),
-      vx: (Math.random() - 0.5) * 0.00022,
-      vy: (Math.random() - 0.5) * 0.00022,
-      r: 1 + Math.random() * 1.8,
-      blue: Math.random() < 0.35
-    });
-  }
-
-  function drawWeb(time) {
-    var ctx = web.ctx;
-    var w = webSize.w, h = webSize.h;
-    ctx.clearRect(0, 0, w, h);
-    var t = time / 1000;
-    var linkDist = isSmall ? 90 : 130;
-
-    // Links first, so nodes sit on top.
-    for (var i = 0; i < nodes.length; i++) {
-      for (var j = i + 1; j < nodes.length; j++) {
-        var a = nodes[i], b = nodes[j];
-        var dx = (a.x - b.x) * w, dy = (a.y - b.y) * h;
-        var d = Math.hypot(dx, dy);
-        if (d < linkDist) {
-          var alpha = (1 - d / linkDist) * 0.35;
-          ctx.beginPath();
-          ctx.moveTo(a.x * w, a.y * h);
-          ctx.lineTo(b.x * w, b.y * h);
-          ctx.strokeStyle = 'rgba(168,200,255,' + alpha.toFixed(3) + ')';
-          ctx.lineWidth = 1;
-          ctx.stroke();
-        }
-      }
-    }
-
-    for (var k = 0; k < nodes.length; k++) {
-      var node = nodes[k];
-      // Slow flow + gentle branching wander
-      node.x += node.vx + Math.sin(t * 0.3 + k) * 0.00004;
-      node.y += node.vy + Math.cos(t * 0.25 + k * 1.7) * 0.00004;
-      if (node.x < 0 || node.x > 1) { node.vx *= -1; node.x = Math.max(0, Math.min(1, node.x)); }
-      if (node.y < 0 || node.y > 1) { node.vy *= -1; node.y = Math.max(0, Math.min(1, node.y)); }
-      var pulse = 0.6 + 0.4 * Math.sin(t * 1.2 + k);
-      ctx.beginPath();
-      ctx.arc(node.x * w, node.y * h, node.r * pulse, 0, Math.PI * 2);
-      ctx.fillStyle = node.blue
-        ? 'rgba(168,200,255,0.9)'
-        : 'rgba(255,255,255,0.85)';
-      ctx.fill();
-    }
-  }
-
-  /* ---------- Animation loop ---------- */
-  function frame(time) {
-    drawHands(time);
-    drawWeb(time);
-    requestAnimationFrame(frame);
-  }
-  if (reducedMotion) {
-    drawHands(0);
-    drawWeb(0);
-  } else {
-    requestAnimationFrame(frame);
-  }
+  // sensible defaults by header name
+  function guess(name){var i=CSV_HEADERS.findIndex(function(h){return h.toLowerCase().indexOf(name)>-1;});return i>=0?String(i):"";}
+  $("#mapText").value=guess("text");$("#mapTime").value=guess("date")||guess("time");$("#mapSource").value=guess("source");$("#mapAuthor").value=guess("author");$("#mapUrl").value=guess("url");
+  $("#csvMap").classList.remove("hidden");$("#csvConfirmBtn").classList.add("hidden");
+ }catch(e){$("#csvErr").textContent="Could not parse this file: "+e.message;}};
+ reader.readAsText(f);
+});
+$("#csvPreviewBtn").addEventListener("click",function(){
+ if($("#mapText").value===""){ $("#csvErr").textContent="Please map the text column before previewing.";return;}
+ $("#csvErr").textContent="";
+ var ti=parseInt($("#mapText").value,10);
+ $("#csvPreview").innerHTML='<table><thead><tr><th>Text</th><th>Date</th><th>Source</th></tr></thead><tbody>'+CSV_ROWS.slice(0,5).map(function(r){return '<tr><td>'+esc(r[ti]||"")+'</td><td>'+esc($("#mapTime").value!==""?r[parseInt($("#mapTime").value,10)]||"":"")+'</td><td>'+esc($("#mapSource").value!==""?r[parseInt($("#mapSource").value,10)]||"":"")+'</td></tr>';}).join("")+'</tbody></table><p class="small">'+CSV_ROWS.length+' data rows in file.</p>';
+ $("#csvConfirmBtn").classList.remove("hidden");
+});
+$("#csvConfirmBtn").addEventListener("click",function(){
+ var ti=parseInt($("#mapText").value,10),si=$("#mapSource").value,ai=$("#mapAuthor").value,ui=$("#mapUrl").value,di=$("#mapTime").value;
+ var valid=[],invalid=0;
+ CSV_ROWS.forEach(function(r,idx){
+  var text=(r[ti]||"").trim();
+  if(!text){invalid++;return;}
+  var ts=di!==""?(r[parseInt(di,10)]||"").trim():"";
+  if(ts&&isNaN(Date.parse(ts))){invalid++;return;}
+  valid.push({id:"imported_"+(IMPORTED.length+valid.length+1),text:text,ts:ts?new Date(ts).toISOString().slice(0,10):"2026-10-28",source:si!==""?(r[parseInt(si,10)]||"CSV upload"):"CSV upload",author:ai!==""?(r[parseInt(ai,10)]||"anonymous"):"anonymous",topic:"imported (unlabelled)",sentiment:"unknown",url:ui!==""?(r[parseInt(ui,10)]||""):""});
+ });
+ if(!valid.length){ $("#csvErr").textContent="Import failed: no valid rows. Every row needs non-empty text and, if mapped, a parseable date.";return;}
+ IMPORTED=IMPORTED.concat(valid);
+ IMPORT_HISTORY.push({file:$("#csvFile").files[0]?$("#csvFile").files[0].name:"CSV",valid:valid.length,invalid:invalid,when:new Date().toISOString()});
+ $("#csvOk").textContent="Imported "+valid.length+" valid rows, "+invalid+" invalid rows skipped. Imported records are kept separate from demo data and labelled user-imported. Switch the Dataset filter to “My imported CSV data” to view them.";
+ $("#importHistory").innerHTML=IMPORT_HISTORY.map(function(h){return '<p>'+esc(h.file)+' — '+h.valid+' valid, '+h.invalid+' invalid — '+esc(h.when)+'</p>';}).join("");
+ fillSelects();
+});
+// hero canvas (restrained, hero only)
+(function(){
+ var c=$("#heroCanvas"),ctx=c.getContext("2d"),pts=[],mx=null,my=null,reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+ for(var i=0;i<70;i++)pts.push({x:Math.random()*520,y:Math.random()*280,r:1+Math.random()*2});
+ function draw(){
+  ctx.clearRect(0,0,520,280);ctx.fillStyle="#2e5a3f";ctx.fillRect(0,0,520,280);
+  pts.forEach(function(p){ctx.beginPath();ctx.fillStyle="#a8c9a5";ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();});
+  if(mx!==null){ctx.beginPath();ctx.strokeStyle="#e6efe6";ctx.moveTo(mx,my);ctx.lineTo(260,140);ctx.stroke();
+   var d=Math.round(Math.hypot(mx-260,my-140)/Math.hypot(260,140)*100);
+   $("#signalDist").textContent=d+"%";}
+ }
+ c.addEventListener("mousemove",function(e){var r=c.getBoundingClientRect();mx=(e.clientX-r.left)*520/r.width;my=(e.clientY-r.top)*280/r.height;draw();});
+ if(!reduced){setInterval(function(){pts.forEach(function(p){p.y+=0.2;if(p.y>280)p.y=0;});draw();},80);}else draw();
 })();
+fillSelects();renderAlerts();
 </script>
 </body>
 </html>
